@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0"
+            prefWidth="400.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="-4.0" layoutY="54.0" prefHeight="62.0"
+               prefWidth="408.0" text="Welcome To Our Application" textAlignment="CENTER" textFill="#472abd">
+            <font>
+                <Font name="Chilanka Regular" size="24.0"/>
+            </font>
+        </Label>
+        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="160.0" prefHeight="40.0"
+               prefWidth="408.0" text="Here you can Manage your Customer DataBase " textFill="#000000c4">
+            <font>
+                <Font name="DejaVu Sans Bold" size="14.0"/>
+            </font>
+        </Label>
+        <ToolBar disable="false" prefHeight="40.0" prefWidth="400.0">
+            <items>
+                <Button fx:id="btnOption" layoutX="144.0" layoutY="12.0" mnemonicParsing="false" onAction="#option"
+                        prefHeight="26.0" prefWidth="91.0" text="OPTION">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                    <font>
+                        <Font name="System Bold Italic" size="12.0"/>
+                    </font>
+                </Button>
+                <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#addCustomer" prefHeight="26.0"
+                        prefWidth="91.0" text="ADD">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                    <font>
+                        <Font name="System Bold Italic" size="12.0"/>
+                    </font>
+                </Button>
+                <Button fx:id="btnDelete" layoutX="212.0" layoutY="12.0" mnemonicParsing="false"
+                        onAction="#deleteCustomerByID" prefHeight="26.0" prefWidth="91.0" text="DELETE">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                    <font>
+                        <Font name="System Bold Italic" size="12.0"/>
+                    </font>
+                </Button>
+                <Button fx:id="btnAllData" layoutX="10.0" layoutY="12.0" mnemonicParsing="false"
+                        onAction="#getAllCustomersFromTheDB"
+                        prefHeight="26.0" prefWidth="91.0" text="DATA">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                    <font>
+                        <Font name="System Bold Italic" size="12.0"/>
+                    </font>
+                </Button>
+            </items>
+        </ToolBar>
+        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="-7.0" layoutY="200.0" prefHeight="40.0"
+               prefWidth="408.0" text="Using this simple Desktop Application" textFill="#000000c4">
+            <font>
+                <Font name="System Bold Italic" size="14.0"/>
+            </font>
+        </Label>
+        <Label contentDisplay="CENTER" layoutX="14.0" layoutY="289.0" prefHeight="40.0" prefWidth="112.0" text="Rules:"
+               textFill="#da2d2dc4">
+            <font>
+                <Font name="System Bold Italic" size="15.0"/>
+            </font>
+        </Label>
+        <Label contentDisplay="CENTER" layoutX="1.0" layoutY="329.0" prefHeight="40.0" prefWidth="400.0"
+               text="* each customer have his own identity number" textFill="#000000c4">
+            <font>
+                <Font name="System Bold Italic" size="15.0"/>
+            </font>
+        </Label>
+        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="-7.0" layoutY="490.0" prefHeight="40.0"
+               prefWidth="408.0" text="for more information cantact us using this email " textFill="#472abd">
+            <font>
+                <Font name="System Bold Italic" size="13.0"/>
+            </font>
+        </Label>
+        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="-3.0" layoutY="510.0" prefHeight="40.0"
+               prefWidth="408.0" text=" nidhalnaffati@gmail.com" textFill="#472abd">
+            <font>
+                <Font name="System Bold Italic" size="13.0"/>
+            </font>
+        </Label>
+        <Label contentDisplay="CENTER" layoutX="1.0" layoutY="394.0" prefHeight="40.0" prefWidth="400.0"
+               text="*firt name should be less than 16 caracteres" textFill="#000000c4">
+            <font>
+                <Font name="System Bold Italic" size="15.0"/>
+            </font>
+        </Label>
+        <Label contentDisplay="CENTER" layoutX="1.0" layoutY="427.0" prefHeight="40.0" prefWidth="400.0"
+               text="*last name should be less than 16 caracteres" textFill="#000000c4">
+            <font>
+                <Font name="System Bold Italic" size="15.0"/>
+            </font>
+        </Label>
+        <Label contentDisplay="CENTER" layoutY="459.0" prefHeight="40.0" prefWidth="400.0"
+               text="*location should be less than 32 caracteres" textFill="#000000c4">
+            <font>
+                <Font name="System Bold Italic" size="15.0"/>
+            </font>
+        </Label>
+        <Label contentDisplay="CENTER" layoutY="360.0" prefHeight="40.0" prefWidth="400.0"
+               text="* each customer have his own phone number" textFill="#000000c4">
+            <font>
+                <Font name="System Bold Italic" size="15.0"/>
+            </font>
+        </Label>
+    </children>
+    <cursor>
+        <Cursor fx:constant="DEFAULT"/>
+    </cursor>
+</AnchorPane>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="550.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/19"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <TextField fx:id="textFieldForId" layoutX="114.0" layoutY="252.0">
+            <font>
+                <Font name="System Bold Italic" size="12.0"/>
+            </font>
+        </TextField>
+        <Button fx:id="btnDelete" layoutX="152.0" layoutY="335.0" mnemonicParsing="false" onAction="#deleteCustomer"
+                prefHeight="29.0" prefWidth="96.0" text="DELETE">
+            <font>
+                <Font name="System Bold Italic" size="15.0"/>
+            </font>
+        </Button>
+
+        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="-4.0" layoutY="54.0" prefHeight="62.0"
+               prefWidth="408.0" text="DELETE CUSTOMER" textAlignment="CENTER" textFill="#472abd">
+            <font>
+                <Font name="Chilanka Regular" size="24.0"/>
+            </font>
+        </Label>
+
+
+        <Label fx:id="messageLabel" alignment="CENTER" layoutX="27.0" layoutY="364.0" prefHeight="154.0"
+               prefWidth="346.0">
+            <font>
+                <Font name="System Bold Italic" size="19.0"/>
+            </font>
+        </Label>
+        <Label fx:id="welcomeLabel1" alignment="CENTER" layoutX="27.0" layoutY="205.0" prefHeight="40.0"
+               prefWidth="345.0" text="write the customer's ID here" textFill="#2055d0">
+            <font>
+                <Font name="DejaVu Sans Bold" size="14.0"/>
+            </font>
+        </Label>
+    </children>
+</AnchorPane>

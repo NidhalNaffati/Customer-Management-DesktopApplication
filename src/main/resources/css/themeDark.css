@@ -1,0 +1,44 @@
+AnchorPane{
+    -fx-background-color :#dcdcdc ;
+    -fx-text-fill: #b387d6;
+}
+
+Button {
+	-fx-background-color : #fffafa ;
+	-fx-text-fill : #708090 ;
+	-fx-padding : 8 8 8 8 ;
+	-fx-border-radius : 10 ;
+	-fx-font-weight : bold ;
+}
+
+TextField{
+     -fx-alignment : center ;
+}
+
+#customerFullName{
+    -fx-text-fill : #723396 ;
+}
+
+#messageLabel
+{
+          -fx-font-style: italic;
+          -fx-font-size : 20px ;
+          -fx-text-fill :  red ;
+          -fx-alignment : center ;
+          -fx-font-family: Gabriola;
+}
+
+#btnSearch{
+       	-fx-background-color : #fffafa ;
+       	-fx-text-fill : #708090 ;
+       	-fx-padding : 2 2 2 2 ;
+       	-fx-border-radius : 6 ;
+       	-fx-font-weight : bold ;
+}
+#btnRefresh{
+	    -fx-background-color : #fffafa ;
+       	-fx-text-fill : #708090 ;
+       	-fx-padding : 2 2 2 2 ;
+       	-fx-border-radius : 6 ;
+       	-fx-font-weight : bold ;
+}
