@@ -30,8 +30,14 @@ This is a simple JavaFX project aiming to do some local registration of some dat
 
 
 ###  Some screenshots: 
+welcome page.
+![ ](src/main/resources/images/Screenshot from 2022-10-25 22-19-24.png)
 
-![](src/main/resources/images/Screenshot from 2022-10-25 22-19-24.png)
+add customer page.
 ![](src/main/resources/images/Screenshot from 2022-10-25 22-19-34.png)
+
+crud successfully done.
 ![](src/main/resources/images/Screenshot from 2022-10-25 22-21-20.png)
+
+getting all tha data from the db.
 ![](src/main/resources/images/Screenshot from 2022-10-25 22-30-29.png)
