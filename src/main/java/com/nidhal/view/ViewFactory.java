@@ -1,5 +1,4 @@
 package com.nidhal.view;
-
 import com.nidhal.controller.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,48 +9,72 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * ViewFactory is responsible for creating and showing different windows for different tasks such as login,
+ * showing all customer's data, adding a new customer, deleting a customer and displaying options.
+ * Each window is represented by a controller class (e.g. LoginPageController, AllDataController)
+ * that extends the BaseController class and is responsible for the logic of the corresponding window.
+ * The ViewFactory class also keeps track of all the currently open windows (stages) in an ArrayList and
+ * allows for closing and updating the styles of these windows.
+ */
 public class ViewFactory {
 
-
+    /**
+     * ArrayList to keep track of all the currently open windows(stages)
+     */
     private final ArrayList<Stage> activeStages;
 
+    /**
+     * constructor to initialize activeStages list
+     */
     public ViewFactory() {
         activeStages = new ArrayList<Stage>();
     }
 
-    // show up the login window
+    /**
+     * Show the login window
+     */
     public void showLoginWindow() {
         BaseController controller = new LoginPageController(this, "/fxml/LoginPage.fxml");
         initializeStage(controller);
     }
 
-    // show up the all the customers in the db.
+    /**
+     * Show all the customers in the db.
+     */
     public void showAllDataWindow() {
         BaseController controller = new AllDataController(this, "/fxml/ShowData.fxml");
         initializeStage(controller);
     }
 
-    // show up the delete customer page.
+    /**
+     * Show the delete customer page.
+     */
     public void showDeleteCustomerWindow() {
         BaseController controller = new DeleteCustomerController(this, "/fxml/DeleteCustomer.fxml");
         initializeStage(controller);
     }
 
-    // show up add new customer window
+    /**
+     * Show add new customer window
+     */
     public void showAddCustomerWindow() {
         BaseController controller = new AddCustomerController(this, "/fxml/AddCustomer.fxml");
         initializeStage(controller);
     }
 
-
-    // show up option window
+    /**
+     * Show option window
+     */
     public void showOptionWindow() {
         BaseController controller = new OptionsController(this, "/fxml/Option.fxml");
         initializeStage(controller);
     }
 
-
-    // this method responsible for showing a specific window (parameter)
+    /**
+     * This method is responsible for showing a specific window (parameter)
+     * @param baseController the controller class that represents the window
+     */
     private void initializeStage(BaseController baseController) {
         System.out.print("Opening : ");
         System.out.println(getClass().getResource(baseController.getFxmlFile()));
@@ -83,11 +106,18 @@ public class ViewFactory {
         }
     }
 
+    /**
+     * Close a specific stage
+     * @param stageToClose the stage to be closed
+     */
     public void closeStage(Stage stageToClose) {
         stageToClose.close();
         activeStages.remove(stageToClose);
     }
 
+    /**
+     * Method to update the styles of all the currently open stages
+     */
     public void updateStyles() {
         try {
             for (Stage stage : activeStages) {
@@ -102,24 +132,46 @@ public class ViewFactory {
 
     }
 
-
+    /**
+     * current color theme
+     */
     private ColorTheme colorTheme = ColorTheme.DARK;
+    /**
+     * current font size
+     */
     private FontSize fontSize = FontSize.BIG;
 
+    /**
+     * Get the current color theme
+     * @return the current color theme
+     */
     public ColorTheme getColorTheme() {
         return colorTheme;
     }
 
+    /**
+     * Set the color theme
+     * @param colorTheme the color theme to set
+     */
     public void setColorTheme(ColorTheme colorTheme) {
         this.colorTheme = colorTheme;
     }
 
+    /**
+     * Get the current font size
+     * @return the current font size
+     */
     public FontSize getFontSize() {
         return fontSize;
     }
 
+    /**
+     * Set the font size
+     * @param fontSize the font size to set
+     */
     public void setFontSize(FontSize fontSize) {
         this.fontSize = fontSize;
     }
+
 }
 
