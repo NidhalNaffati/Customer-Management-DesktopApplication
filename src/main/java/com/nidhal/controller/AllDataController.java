@@ -1,7 +1,5 @@
 package com.nidhal.controller;
 
-
-import com.nidhal.model.DataBaseConnection;
 import com.nidhal.model.Customer;
 import com.nidhal.view.ViewFactory;
 import javafx.collections.FXCollections;
@@ -15,174 +13,129 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import static com.nidhal.model.DataBaseConnection.getAllCustomersFromTheDB;
+import static com.nidhal.model.DataBaseConnection.getCustomersById;
 
+/**
+ * The AllDataController class extends the BaseController and implements the Initializable interface.
+ * It is responsible for displaying all customer data in a table and for searching for a specific customer by ID.
+ *
+ */
 public class AllDataController extends BaseController implements Initializable {
 
+    /**
+     * Constructor for AllDataController.
+     *
+     * @param viewFactory the factory to create views.
+     * @param fxmlName the name of the FXML file.
+     */
     public AllDataController(ViewFactory viewFactory, String fxmlName) {
         super(viewFactory, fxmlName);
     }
 
+    /**
+     * The table view to display the customer data.
+     */
     @FXML
     private TableView<Customer> tableViewForCustomer;
 
-
+    /**
+     * The table columns for displaying the customer ID, phone number, first name, last name, and location.
+     */
     @FXML
-    private TableColumn<Customer, Integer> idCall;
-
+    private TableColumn<Customer, Integer> idCall, phoneNumberCall;
     @FXML
-    private TableColumn<Customer, String> firstNameCall;
+    private TableColumn<Customer, String> firstNameCall , lastNameCall, locationCall;
 
-    @FXML
-    private TableColumn<Customer, String> lastNameCall;
-
-    @FXML
-    private TableColumn<Customer, String> locationCall;
-
-    @FXML
-    private TableColumn<Customer, Integer> phoneNumberCall;
-
+    /**
+     * The button for triggering the search.
+     */
     @FXML
     private Button btnSearch;
 
+    /**
+     * The text field for entering the search criteria.
+     */
     @FXML
     private TextField textFieldForSearch;
 
-
+    /**
+     * The list to store the customer data.
+     */
     ObservableList<Customer> customerList = FXCollections.observableArrayList();
 
 
-    Connection connection = null;
-    Statement statement = null;
-    ResultSet result = null;
-
-
-    // get all customers from the database.
-
-    public void getAllCustomersFromTheDB() {
-
-
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet result = null;
-
-        ObservableList<Customer> customerList = FXCollections.observableArrayList();
-
-
-        try {
-            connection = DataBaseConnection.getDataBaseConnection();
-            statement = connection.createStatement();
-            result = statement.executeQuery("select * from customer_table ");
-
-            while (result.next()) {
-                customerList.add(new Customer(
-                        result.getInt("id"),
-                        result.getString("firstName"),
-                        result.getString("lastName"),
-                        result.getInt("phoneNumber"),
-                        result.getString("location")));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                result.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        idCall.setCellValueFactory(new PropertyValueFactory<>("id"));
-        firstNameCall.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        lastNameCall.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-        phoneNumberCall.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
-        locationCall.setCellValueFactory(new PropertyValueFactory<>("location"));
-
-        tableViewForCustomer.setItems(customerList);
+    /**
+     * The initialize method is called when the view is loaded. It shows all the customers.
+     *
+     * @param url the URL of the resource.
+     * @param resourceBundle the resource bundle.
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        showUpAllCustomers();
     }
 
 
+    /**
+     * Refreshes the customer data by clearing the current data and calling the showAllCustomers method.
+     */
     @FXML
     void refreshData() {
         customerList.clear();
         textFieldForSearch.clear();
-        getAllCustomersFromTheDB();
+        showUpAllCustomers();
     }
 
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        getAllCustomersFromTheDB();
-    }
-
-
+    /**
+     * Shows all the customers by retrieving the data from the database and setting it to the table view.
+     */
     @FXML
-    void searchForCustomerByID() {
+    private void showUpAllCustomers() {
+
+        ArrayList<Customer> customerArrayList =  getAllCustomersFromTheDB();
+
+        ObservableList<Customer> observableArrayList = FXCollections.observableList(customerArrayList);
+
+        SetCustomers(observableArrayList);
+
+    }
+
+    /**
+     * Searches for a customer by ID by retrieving the data from the database and setting it to the table view.
+     */
+    @FXML
+    private void searchForCustomerByID() {
         int idNumber = 0;
         try {
             idNumber = Integer.parseInt(textFieldForSearch.getText());
         } catch (NumberFormatException ex) {
+            ex.printStackTrace();
         }
 
-        try {
-            connection = DataBaseConnection.getDataBaseConnection();
+        ArrayList<Customer> customerArrayList =  getCustomersById(idNumber);
 
-            statement = connection.createStatement();
+        ObservableList<Customer> observableArrayList = FXCollections.observableList(customerArrayList);
 
-             result = statement.executeQuery("select * from customer_table where id =  " + idNumber);
+        SetCustomers(observableArrayList);
 
-            customerList.clear();
+    }
 
-            while (result.next()) {
-                customerList.add(new Customer(
-                        result.getInt("id"),
-                        result.getString("firstName"),
-                        result.getString("lastName"),
-                        result.getInt("phoneNumber"),
-                        result.getString("location")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                result.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
+    /**
+     * This method sets the customers to be displayed in the table view for customers.
+     *
+     * @param customerList - An ObservableList of Customer objects.
+     */
+    private void SetCustomers(ObservableList<Customer> customerList) {
         idCall.setCellValueFactory(new PropertyValueFactory<>("id"));
         firstNameCall.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         lastNameCall.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         phoneNumberCall.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
         locationCall.setCellValueFactory(new PropertyValueFactory<>("location"));
-        tableViewForCustomer.setItems(customerList);
 
+        tableViewForCustomer.setItems(customerList);
     }
 }

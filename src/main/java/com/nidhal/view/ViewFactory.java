@@ -80,7 +80,6 @@ public class ViewFactory {
         System.out.println(getClass().getResource(baseController.getFxmlFile()));
 
         URL fxmlFileUrl = getClass().getResource(baseController.getFxmlFile());
-
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setController(baseController);
         Parent parent;
@@ -93,16 +92,13 @@ public class ViewFactory {
             stage.setScene(scene);
             stage.setResizable(false);
             scene.getStylesheets().add(getClass().getResource("/css/themeDark.css").toExternalForm());
-            Image iconImage = new Image(getClass().getResourceAsStream("/images/DoctorImage.png"));
-            stage.getIcons().add(iconImage);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/DoctorImage.png")));
             stage.setScene(scene);
             stage.setTitle("CUSTOMER MANAGEMENT");
             stage.show();
             activeStages.add(stage);
-        } catch (IllegalArgumentException e) {
-            e.getCause();
-        } catch (Exception e) {
-            e.printStackTrace();
+        }catch (Exception e) {
+            System.out.println("Error initializing stage: " + e.getMessage());
         }
     }
 

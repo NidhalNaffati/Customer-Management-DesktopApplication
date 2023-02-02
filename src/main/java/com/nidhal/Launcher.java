@@ -9,8 +9,6 @@ import static com.nidhal.model.DataBaseConnection.createDataBaseIfNotExists;
 import static com.nidhal.model.DataBaseConnection.createTableCustomerIfNotExists;
 
 public class Launcher extends Application {
-
-
     public static void main(String[] args) {
 
         createDataBaseIfNotExists();
@@ -25,6 +23,5 @@ public class Launcher extends Application {
         ViewFactory viewFactory = new ViewFactory();
         viewFactory.showLoginWindow();
     }
-
 
 }

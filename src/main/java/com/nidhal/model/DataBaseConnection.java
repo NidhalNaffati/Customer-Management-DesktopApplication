@@ -1,10 +1,13 @@
 package com.nidhal.model;
 
 
+import com.nidhal.config.DBConfig;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 import static com.nidhal.model.Customer.validID;
 
@@ -16,11 +19,11 @@ import static com.nidhal.model.Customer.validID;
  */
 public class DataBaseConnection {
 
-    // Variables to store the database connection details
-    static String databaseName = "CustomerDB";
-    static String url = "jdbc:mysql://localhost:3306/" + databaseName + "?";
-    static String user = "root";
-    static String password = "root";
+    static Connection connection = null;
+    static Statement statement = null;
+    static PreparedStatement preparedStatement = null;
+    static ResultSet result = null;
+
 
     /**
      * Method to get a connection to the database.
@@ -29,25 +32,63 @@ public class DataBaseConnection {
      * @throws SQLException if there is an error connecting to the database
      */
     public static Connection getDataBaseConnection() throws SQLException {
-        Connection databaseConnection = DriverManager.getConnection(url, user, password);
-        return databaseConnection;
+        try {
+            Connection databaseConnection = DriverManager.getConnection(DBConfig.getUrl(), DBConfig.getUser(), DBConfig.getPassword());
+            return databaseConnection;
+        } catch (SQLException e) {
+            throw new SQLException("ERROR CONNECTING TO THE DATABASE", e);
+        }
     }
+    public static void closeConnection(Connection connection, Statement statement, ResultSet result) {
+        try {
+            result.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void closeConnection(Connection connection, Statement statement) {
+        try {
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Method to create the database if it does not exist.
      */
     public static void createDataBaseIfNotExists() {
-        // Open a connection
+
+
         try {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/", user, password);
-            Statement stmt = conn.createStatement();
+            connection = DataBaseConnection.getDataBaseConnection();
+            statement = connection.createStatement();
             String sql = "CREATE DATABASE IF NOT EXISTS CustomerDB";
-            stmt.executeUpdate(sql);
-            System.out.println("Database created successfully.");
+            statement.executeUpdate(sql);
+            System.out.println("DATABASE CREATED SUCCESSFULLY.");
         } catch (SQLSyntaxErrorException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+        finally {
+            closeConnection(connection, statement);
         }
     }
 
@@ -55,16 +96,22 @@ public class DataBaseConnection {
      * Method to create the customer_table if it does not exist.
      */
     public static void createTableCustomerIfNotExists() {
+
         try {
-            Connection connection = DriverManager.getConnection(url, user, password);
-            Statement stmt = connection.createStatement();
-            String sql = "CREATE TABLE IF NOT EXISTS `CustomerDB`.`customer_table` ( `id` INT NOT NULL, `firstName` VARCHAR(16) NOT NULL, `lastName` VARCHAR(16) NOT NULL, `phoneNumber` INT(8) NULL, `location` VARCHAR(32) NOT NULL, PRIMARY KEY (`id`), UNIQUE INDEX `phoneNumber_UNIQUE` (`phoneNumber` ASC) VISIBLE);";
-            stmt.executeUpdate(sql);
-            System.out.println("Table created successfully.");
-        } catch (SQLSyntaxErrorException e) {
-            e.printStackTrace();
+            connection = DataBaseConnection.getDataBaseConnection();
+            statement = connection.createStatement();
+
+            // Use a prepared statement to make the code more readable and less prone to SQL injection attacks
+            String sql = "CREATE TABLE IF NOT EXISTS customer_table (id INT NOT NULL, firstName VARCHAR(16) NOT NULL, lastName VARCHAR(16) NOT NULL, phoneNumber INT(8) NULL, location VARCHAR(32) NOT NULL, PRIMARY KEY (id), UNIQUE INDEX phoneNumber_UNIQUE (phoneNumber));";
+
+            statement.executeUpdate(sql);
+
+            System.out.println("TABLE CREATED SUCCESSFULLY.");
         } catch (SQLException e) {
+            System.out.println("ERROR CREATING TABLE "+e);
             throw new RuntimeException(e);
+        } finally {
+            closeConnection(connection, statement);
         }
     }
 
@@ -75,46 +122,35 @@ public class DataBaseConnection {
      * @param messageLabel   Label to display success or error message
      * @param textFieldForId TextField for the customer ID input
      */
-
     public static void deleteCustomerByID(int id, Label messageLabel, TextField textFieldForId) {
 
-        Connection connection = null;
-        Statement statement = null;
+        try {
+            connection = DataBaseConnection.getDataBaseConnection();
 
-
-        if (validID(id))
-            try {
-
-                connection = DataBaseConnection.getDataBaseConnection();
-
-                String sql = "delete from customer_table where id = " + "'" + id + "'";
-
-                statement = connection.createStatement();
-
-                int rowEffected = statement.executeUpdate(sql);
-
-                messageLabel.setText("CUSTOMER DELETED SUCCESS " + id);
-
-                textFieldForId.clear();
-
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            } catch (IllegalArgumentException ex) {
-                ex.getCause();
-                messageLabel.setText("must be 8");
-
-            } finally {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            // Validate id before making a delete request
+            if (!validID(id)) {
+                messageLabel.setText("ID MUST BE A POSITIVE INTEGER");
+                return;
             }
+
+            String sql = "DELETE FROM customer_table WHERE id = " + id;
+            statement = connection.createStatement();
+            int rowEffected = statement.executeUpdate(sql);
+
+            // Check if the deletion was successful
+            if (rowEffected > 0) {
+                messageLabel.setText("CUSTOMER DELETED SUCCESSFULLY, ID: " + id);
+            } else {
+                messageLabel.setText("CUSTOMER NOT FOUND, ID: " + id);
+            }
+            textFieldForId.clear();
+        } catch (SQLException ex) {
+            System.out.println("ERROR DELETING CUSTOMER" + ex);
+            messageLabel.setText("ERROR DELETING CUSTOMER, ID: " + id);
+        } finally {
+            closeConnection(connection, statement);
+
+        }
     }
 
     /**
@@ -129,43 +165,95 @@ public class DataBaseConnection {
      * @param textFieldForId TextField for the customer ID input
      */
     public static void addNewCustomer(int id, int phoneNumber, String firstName, String lastName, String location, Label messageLabel, TextField textFieldForId) {
-        Connection connection = null;
-        Statement statement = null;
 
         try {
             connection = DataBaseConnection.getDataBaseConnection();
 
-            String info = "'" + id + "' , '" + firstName + "' , '" + lastName + "' , '  " + phoneNumber + "' , '" + location + " ' ";
+            // use parameterized SQL statement to prevent SQL injection
+            String sql = "INSERT INTO customer_table (id, firstName, lastName, phoneNumber, location) VALUES (?, ?, ?, ?, ?)";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.setString(2, firstName);
+            preparedStatement.setString(3, lastName);
+            preparedStatement.setInt(4, phoneNumber);
+            preparedStatement.setString(5, location);
 
-            String sql = "insert into customer_table values (" + info + ") ";
+            int rowEffected = preparedStatement.executeUpdate();
 
-            statement = connection.createStatement();
+            messageLabel.setText("CUSTOMER ADDED SUCCESSFULLY");
 
-            int rowEffected = statement.executeUpdate(sql);
-
-            messageLabel.setText("CUSTOMER ADDED SUCESSFULY");
-
-        } catch (IllegalArgumentException E) {
-            E.getCause();
-        } catch (SQLIntegrityConstraintViolationException E) {
-            messageLabel.setText("ID NUMBER EXEST");
+        } catch (SQLIntegrityConstraintViolationException e) {
+            messageLabel.setText("ID NUMBER ALREADY EXISTS");
             textFieldForId.clear();
-        } catch (SQLException E) {
-            E.printStackTrace();
-        } catch (Exception E) {
-            E.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("ERROR ADDING CUSTOMER "+e);
+
         } finally {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            // close the resources in the reverse order they were opened
+            closeConnection(connection, preparedStatement);
         }
     }
-}
 
+    /**
+     * Retrieves all customers from the database and returns the result as a list of Customer objects.
+     *
+     * @return an ArrayList of Customer objects, each representing a row in the customer_table.
+     */
+    public static ArrayList<Customer> getAllCustomersFromTheDB() {
+
+        ArrayList<Customer> customerList = new ArrayList<>();
+
+        try {
+            connection = DataBaseConnection.getDataBaseConnection();
+            statement = connection.createStatement();
+            result = statement.executeQuery("SELECT * FROM customer_table");
+
+            while (result.next()) {
+                customerList.add(new Customer(
+                        result.getInt("id"),
+                        result.getString("firstName"),
+                        result.getString("lastName"),
+                        result.getInt("phoneNumber"),
+                        result.getString("location")));
+            }
+        } catch (SQLException e) {
+            System.out.println("ERROR RETRIEVING DATA "+e);
+        } finally {
+            DataBaseConnection.closeConnection(connection, statement, result);
+        }
+
+        return customerList;
+    }
+
+    /**
+     * Retrieves the customer with the specified ID from the database and returns the result as a list of Customer objects.
+     *
+     * @param id the ID of the customer to retrieve.
+     * @return an ArrayList of Customer objects, each representing a row in the customer_table with the specified ID.
+     */
+    public static ArrayList<Customer> getCustomersById(int id) {
+
+        ArrayList<Customer> customerList = new ArrayList<>();
+
+        try {
+            connection = DataBaseConnection.getDataBaseConnection();
+            statement = connection.createStatement();
+            result = statement.executeQuery("SELECT * FROM customer_table WHERE id = " + id);
+
+            while (result.next()) {
+                customerList.add(new Customer(
+                        result.getInt("id"),
+                        result.getString("firstName"),
+                        result.getString("lastName"),
+                        result.getInt("phoneNumber"),
+                        result.getString("location")));
+            }
+        } catch (SQLException e) {
+            System.out.println("ERROR RETRIEVING DATA "+e);
+        } finally {
+            DataBaseConnection.closeConnection(connection, statement, result);
+        }
+
+        return customerList;
+    }
+}
