@@ -2,6 +2,8 @@ services:
   mysql:
     image: mysql:8-debian # u can use any version of mysql
     container_name: mysql-testing-container
+    volumes:
+      - ./db_setup.sql:/docker-entrypoint-initdb.d/db_setup.sql
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_USER: user
